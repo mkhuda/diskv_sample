@@ -25,7 +25,6 @@ func main() {
 		return
 	}
 
-	// currentDisk.Write(key, []byte{`a`})
 	fmt.Println("::::value")
 	fmt.Print("Enter the value: ")
 
