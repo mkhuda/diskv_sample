@@ -1,4 +1,4 @@
-module github.com/mkhuda/halo
+module github.com/mkhuda/diskv_wrapper
 
 go 1.14
 
