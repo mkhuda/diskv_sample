@@ -1,27 +1,39 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/peterbourgon/diskv/v3"
 )
 
 func main() {
-	var key, value string
+	var version, key, value string
 
 	fmt.Println("::Using Diskv")
 
-	currentDisk := initDiskv()
+	currentDisk := diskvInit()
+
+	fmt.Println("::::version")
+	fmt.Print("Enter version (v1, v2, v...): ")
+
+	// Input version name {v1, v2, v...}
+	_version, err := fmt.Scanln(&version)
+	if err != nil {
+		justError(_version, err)
+		return
+	}
+
+	defer currentDisk.WriteString("version", version)
 
 	fmt.Println("::::key")
 	fmt.Print("Enter key: ")
 
 	// Input key name
-	k, err := fmt.Scanln(&key)
+	_key, err := fmt.Scanln(&key)
 	if err != nil {
-		justError(k, err)
+		justError(_key, err)
 		return
 	}
 
@@ -29,24 +41,36 @@ func main() {
 	fmt.Print("Enter the value: ")
 
 	// Input value
-	v, err := fmt.Scanln(&value)
+	_value, err := fmt.Scan(&value)
 	if err != nil {
-		justError(v, err)
+		justError(_value, err)
 		return
 	}
-	writeBuf, sync := bytes.NewBufferString(value), true
-	if err := currentDisk.WriteStream(key, writeBuf, sync); err != nil {
-		fmt.Printf("Write error: %v", err)
-	}
+
+	path := strings.Join([]string{version, key}, "/")
+
+	currentDisk.WriteString(path, value)
 }
 
-func initDiskv() *diskv.Diskv {
-	flatTransform := func(s string) []string { return []string{} }
+// Diskv init
+func diskvInit() *diskv.Diskv {
+	transform := func(key string) *diskv.PathKey {
+		path := strings.Split(key, "/")
+		last := len(path) - 1
+		return &diskv.PathKey{
+			Path:     path[:last],
+			FileName: path[last],
+		}
+	}
+	inverseTransform := func(pathKey *diskv.PathKey) (key string) {
+		return strings.Join(pathKey.Path, "/") + pathKey.FileName[:len(pathKey.FileName)-4]
+	}
 
 	disk := diskv.New(diskv.Options{
-		BasePath:     "localdisk",
-		Transform:    flatTransform,
-		CacheSizeMax: 1024 * 1024,
+		BasePath:          "localdisk",
+		AdvancedTransform: transform,
+		InverseTransform:  inverseTransform,
+		CacheSizeMax:      1024 * 1024,
 	})
 
 	return disk
