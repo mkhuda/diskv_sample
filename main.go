@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/peterbourgon/diskv"
+	"github.com/peterbourgon/diskv/v3"
 )
 
 func main() {
