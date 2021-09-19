@@ -6,8 +6,7 @@ import (
 	"os"
 	"strings"
 
-	diskv_utils "github.com/mkhuda/diskv_wrapper/utils"
-	"github.com/peterbourgon/diskv/v3"
+	diskv_utils "github.com/mkhuda/diskv_wrapper"
 )
 
 func main() {
@@ -15,7 +14,7 @@ func main() {
 
 	fmt.Println("::Using Diskv")
 
-	currentDisk := diskvInit()
+	currentDisk := diskv_utils.Init()
 
 	fmt.Println("::::Existing")
 	existingVersionUse := diskv_utils.VersionUse(currentDisk)
@@ -28,7 +27,7 @@ func main() {
 	// Input version name {v1, v2, v...}
 	_version, err := fmt.Scanln(&version)
 	if err != nil {
-		justError(_version, err)
+		diskv_utils.JustError(_version, err)
 		return
 	}
 
@@ -40,7 +39,7 @@ func main() {
 	// Input key name
 	_key, err := fmt.Scanln(&key)
 	if err != nil {
-		justError(_key, err)
+		diskv_utils.JustError(_key, err)
 		return
 	}
 
@@ -52,7 +51,7 @@ func main() {
 	valueBytes, _, err := valueReader.ReadLine()
 	value = string(valueBytes)
 	if err != nil {
-		justError(valueBytes, err)
+		diskv_utils.JustError(valueBytes, err)
 		return
 	}
 
@@ -60,20 +59,4 @@ func main() {
 
 	currentDisk.WriteString(path, value)
 
-}
-
-// Diskv init
-func diskvInit() *diskv.Diskv {
-	disk := diskv.New(diskv.Options{
-		BasePath:          "localdisk",
-		AdvancedTransform: diskv_utils.AdvanceTransform,
-		InverseTransform:  diskv_utils.InverseTransform,
-		CacheSizeMax:      1024 * 1024,
-	})
-
-	return disk
-}
-
-func justError(id interface{}, err error) {
-	fmt.Printf("Error: %v %v %v", id, os.Stderr, err)
 }

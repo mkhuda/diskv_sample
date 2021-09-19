@@ -1,4 +1,4 @@
-package utils
+package diskv_wrapper
 
 import (
 	"fmt"
