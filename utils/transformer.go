@@ -14,6 +14,10 @@ func AdvanceTransform(key string) *diskv.PathKey {
 		FileName: path[last],
 	}
 }
+
 func InverseTransform(pathKey *diskv.PathKey) (key string) {
-	return strings.Join(pathKey.Path, "/") + pathKey.FileName[:len(pathKey.FileName)-4]
+	var path, file []string
+	file = []string{pathKey.FileName[:len(pathKey.FileName)]}
+	path = append(pathKey.Path, file...)
+	return strings.Join(path, "/")
 }

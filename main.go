@@ -17,6 +17,11 @@ func main() {
 
 	currentDisk := diskvInit()
 
+	fmt.Println("::::Existing")
+	existingVersionUse := diskv_utils.VersionUse(currentDisk)
+	diskv_utils.ReadByVersions(existingVersionUse, currentDisk)
+	diskv_utils.ReadAllKeys(currentDisk)
+
 	fmt.Println("::::version")
 	fmt.Print("Enter version (v1, v2, v...): ")
 
@@ -27,7 +32,7 @@ func main() {
 		return
 	}
 
-	defer currentDisk.WriteString("version", version)
+	diskv_utils.WriteVersion(currentDisk, version)
 
 	fmt.Println("::::key")
 	fmt.Print("Enter key: ")
@@ -54,6 +59,7 @@ func main() {
 	path := strings.Join([]string{version, key}, "/")
 
 	currentDisk.WriteString(path, value)
+
 }
 
 // Diskv init
