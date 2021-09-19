@@ -11,10 +11,11 @@ import (
 
 func main() {
 	var version, key, value string
+	var basePath = "example_data"
 
 	fmt.Println("::Using Diskv")
 
-	currentDisk := diskv_utils.Init()
+	currentDisk := diskv_utils.Init(basePath)
 
 	fmt.Println("::::Existing")
 	existingVersionUse := diskv_utils.VersionUse(currentDisk)
