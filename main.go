@@ -1,10 +1,12 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"strings"
 
+	diskv_utils "github.com/mkhuda/diskv_wrapper/utils"
 	"github.com/peterbourgon/diskv/v3"
 )
 
@@ -41,9 +43,11 @@ func main() {
 	fmt.Print("Enter the value: ")
 
 	// Input value
-	_value, err := fmt.Scan(&value)
+	valueReader := bufio.NewReader(os.Stdin)
+	valueBytes, _, err := valueReader.ReadLine()
+	value = string(valueBytes)
 	if err != nil {
-		justError(_value, err)
+		justError(valueBytes, err)
 		return
 	}
 
@@ -54,28 +58,16 @@ func main() {
 
 // Diskv init
 func diskvInit() *diskv.Diskv {
-	transform := func(key string) *diskv.PathKey {
-		path := strings.Split(key, "/")
-		last := len(path) - 1
-		return &diskv.PathKey{
-			Path:     path[:last],
-			FileName: path[last],
-		}
-	}
-	inverseTransform := func(pathKey *diskv.PathKey) (key string) {
-		return strings.Join(pathKey.Path, "/") + pathKey.FileName[:len(pathKey.FileName)-4]
-	}
-
 	disk := diskv.New(diskv.Options{
 		BasePath:          "localdisk",
-		AdvancedTransform: transform,
-		InverseTransform:  inverseTransform,
+		AdvancedTransform: diskv_utils.AdvanceTransform,
+		InverseTransform:  diskv_utils.InverseTransform,
 		CacheSizeMax:      1024 * 1024,
 	})
 
 	return disk
 }
 
-func justError(id int, err error) {
+func justError(id interface{}, err error) {
 	fmt.Printf("Error: %v %v %v", id, os.Stderr, err)
 }
