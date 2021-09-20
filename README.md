@@ -23,7 +23,7 @@ import (
 
 func main() {
 
-    // init disk
+	// init disk
 	disk := diskv.New(diskv.Options{
 		BasePath:          basePath,
 		AdvancedTransform: diskv_wrapper.AdvanceTransform,
@@ -31,13 +31,13 @@ func main() {
 		CacheSizeMax:      1024 * 1024,
 	})
 
-    // write the v1 version into main `version` key
+	// write the v1 version into main `version` key
 	diskv_wrapper.WriteVersion(disk, "v1")
 
-    // get path to write
-    path := diskv_wrapper.GetKeyVersion(currentDisk, version, key)
+	// get path to write
+	path := diskv_wrapper.GetKeyVersion(currentDisk, version, key)
 
-    // write path of version, key and data into disk
+	// write path of version, key and data into disk
 	diskv_wrapper.Write(disk, path, "testdata")
 }
 ```

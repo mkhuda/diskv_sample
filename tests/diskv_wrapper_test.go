@@ -32,6 +32,7 @@ func write_data_string_version(t *testing.T) {
 func TestVersionUse(t *testing.T) {
 	write_disk_version(t)
 	existingVersionUse := diskv_wrapper.VersionUse(disk)
+
 	if len(existingVersionUse) == 0 {
 		t.Errorf("Expected has version to use")
 	}
