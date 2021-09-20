@@ -16,11 +16,10 @@ func VersionUse(d *diskv.Diskv) string {
 			version = string(v)
 		}
 	}
-	fmt.Printf("current version of storage is %v\n", version)
 	return version
 }
 
-func ReadByVersions(v string, d *diskv.Diskv) {
+func ReadByVersions(v string, d *diskv.Diskv) []string {
 	var values []string
 
 	for key := range d.Keys(nil) {
@@ -30,10 +29,10 @@ func ReadByVersions(v string, d *diskv.Diskv) {
 			values = append(values, string(val))
 		}
 	}
-	fmt.Printf("total values in %v is %v\n", v, len(values))
+	return values
 }
 
-func ReadAllKeys(d *diskv.Diskv) {
+func ReadAllKeys(d *diskv.Diskv) int {
 	var keyCount int
 	for key := range d.Keys(nil) {
 		_, err := d.Read(key)
@@ -42,5 +41,5 @@ func ReadAllKeys(d *diskv.Diskv) {
 		}
 		keyCount++
 	}
-	fmt.Printf("there are %d total keys on the disk \n", keyCount)
+	return keyCount
 }

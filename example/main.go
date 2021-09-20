@@ -4,8 +4,8 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"strings"
 
+	"github.com/mkhuda/diskv_wrapper"
 	diskv_utils "github.com/mkhuda/diskv_wrapper"
 )
 
@@ -56,7 +56,7 @@ func main() {
 		return
 	}
 
-	path := strings.Join([]string{version, key}, "/")
+	path := diskv_wrapper.GetKeyVersion(currentDisk, version, key)
 
 	currentDisk.WriteString(path, value)
 
