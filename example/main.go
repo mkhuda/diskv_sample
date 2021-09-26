@@ -56,7 +56,7 @@ func main() {
 		return
 	}
 
-	path := diskv_wrapper.GetKeyVersion(currentDisk, version, key)
+	path := diskv_wrapper.WritePath(currentDisk, version, key)
 
 	currentDisk.WriteString(path, value)
 
