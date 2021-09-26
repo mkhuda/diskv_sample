@@ -1,6 +1,8 @@
 package diskv_wrapper
 
 import (
+	"os"
+	"runtime"
 	"testing"
 
 	"github.com/mkhuda/diskv_wrapper"
@@ -79,5 +81,33 @@ func TestEraseAll(t *testing.T) {
 	existingVersionUse := diskv_wrapper.VersionUse(disk)
 	if len(existingVersionUse) > 0 {
 		t.Errorf("Expected no version stored after erased")
+	}
+}
+
+func TestAppDataWindowWrite(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		appData, err := os.UserCacheDir()
+		if err != nil {
+			t.Errorf("expected can get windows appData path")
+		}
+
+		appDataDisk := diskv_wrapper.Init(appData + "\\diskv_test")
+
+		err_write_appdata_version := diskv_wrapper.WriteVersion(appDataDisk, version)
+		if err_write_appdata_version != nil {
+			t.Errorf("Expected can write version on AppData Windows")
+		}
+
+		appDataPathKey := diskv_wrapper.WritePath(appDataDisk, version, key)
+
+		err_write_appdata := diskv_wrapper.Write(appDataDisk, appDataPathKey, "Halo this is data")
+		if err_write_appdata != nil {
+			t.Errorf("Expected can write data")
+		}
+
+		err_erase_appdata_diskv := appDataDisk.EraseAll()
+		if err_erase_appdata_diskv != nil {
+			t.Errorf("Expected erasing all data on %v", appData+"\\diskv_test")
+		}
 	}
 }
